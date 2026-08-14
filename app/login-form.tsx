@@ -14,11 +14,14 @@ export default function LoginForm() {
 
   async function requestCode(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) return;
+
     setIsLoading(true);
     setMessage("");
 
     const { error } = await createClient().auth.signInWithOtp({
-      email,
+      email: normalizedEmail,
       options: { shouldCreateUser: true },
     });
 
@@ -30,7 +33,9 @@ export default function LoginForm() {
 
     setStep("otp");
     setIsLoading(false);
-    setMessage(`A verification code was sent to ${email}`);
+    setEmail(normalizedEmail);
+    setCode("");
+    setMessage(`A verification code was sent to ${normalizedEmail}`);
   }
 
   async function verifyCode(event: FormEvent<HTMLFormElement>) {
@@ -39,7 +44,7 @@ export default function LoginForm() {
     setMessage("");
 
     const { error } = await createClient().auth.verifyOtp({
-      email,
+      email: email.trim().toLowerCase(),
       token: code,
       type: "email",
     });
@@ -50,17 +55,18 @@ export default function LoginForm() {
       return;
     }
 
-    router.push("/dashboard");
+    router.replace("/dashboard");
+    router.refresh();
   }
 
   if (step === "otp") {
     return (
       <form className="login-form" onSubmit={verifyCode}>
         <div className="sent-note"><span className="check-mark">✓</span><span>Code sent to<br /><strong>{email}</strong></span></div>
-        <label htmlFor="otp">Six-digit access code</label>
-        <input className="otp-input" id="otp" name="otp" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} placeholder="000000" value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))} required />
+         <label htmlFor="otp">Eight-digit access code</label>
+         <input className="otp-input" id="otp" name="otp" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{8}" minLength={8} maxLength={8} placeholder="00000000" value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, "").slice(0, 8))} required />
         {message && <p className="form-message" role="alert">{message}</p>}
-        <button type="submit" disabled={isLoading || code.length !== 6}><span>{isLoading ? "Verifying..." : "Unlock mission"}</span><span className="arrow" aria-hidden="true">↗</span></button>
+         <button type="submit" disabled={isLoading || code.length !== 8}><span>{isLoading ? "Verifying..." : "Unlock mission"}</span><span className="arrow" aria-hidden="true">↗</span></button>
         <div className="form-actions"><button type="button" className="text-button" onClick={() => { setStep("email"); setMessage(""); }}>← Change email</button><button type="button" className="text-button" onClick={() => requestCode({ preventDefault: () => undefined } as FormEvent<HTMLFormElement>)}>Resend code</button></div>
       </form>
     );

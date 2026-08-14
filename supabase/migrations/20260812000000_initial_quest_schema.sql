@@ -11,6 +11,7 @@ create table public.checkpoints (
 
 create table public.players (
   id uuid primary key references auth.users(id) on delete cascade,
+  email text not null,
   full_name text not null,
   phone_number text,
   current_step integer not null default 1 check (current_step > 0),
@@ -36,8 +37,8 @@ security definer
 set search_path = public
 as $$
 begin
-  insert into public.players (id, full_name)
-  values (new.id, coalesce(new.raw_user_meta_data ->> 'full_name', split_part(new.email, '@', 1), 'Player'))
+  insert into public.players (id, email, full_name)
+  values (new.id, new.email, coalesce(new.raw_user_meta_data ->> 'full_name', split_part(new.email, '@', 1), 'Player'))
   on conflict (id) do nothing;
   return new;
 end;
@@ -67,6 +68,9 @@ begin
   select * into player_record from public.players where id = auth.uid();
   if not found then return jsonb_build_object('success', false, 'error_code', 'PLAYER_NOT_FOUND'); end if;
   select * into checkpoint_record from public.checkpoints where sequence_order = player_record.current_step;
+  if not found then
+    return jsonb_build_object('success', false, 'error_code', 'NO_ACTIVE_CLUE', 'message', 'No checkpoint is configured for your current mission step.');
+  end if;
   return jsonb_build_object('success', true, 'completed', player_record.is_completed, 'current_step', player_record.current_step, 'title', checkpoint_record.title, 'clue_text', checkpoint_record.clue_text);
 end;
 $$;

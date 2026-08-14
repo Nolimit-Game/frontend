@@ -9,7 +9,7 @@ Next.js App Router starter for a NoLimit clothing-store scavenger hunt. It inclu
 3. Add the supplied brand image at `public/logo.png`.
 4. Start the development server with `npm run dev`.
 
-The login form uses `supabase.auth.signInWithOtp` and `supabase.auth.verifyOtp` for email-only passwordless login.
+The home page uses `supabase.auth.signInWithOtp` and `supabase.auth.verifyOtp` for email-only passwordless login. The dashboard requires that authenticated session and no longer creates anonymous test players.
 
 ## Supabase CLI setup
 
@@ -36,15 +36,28 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 
 Find both values in Supabase Project Settings > API. Only the publishable/anon key belongs in this frontend. Never expose a `service_role` key in Next.js client code, `.env.example`, Git, or a browser.
 
-## Free email OTP setup
+## Email OTP setup
 
-For development, use Supabase's built-in email provider. In Authentication > Providers > Email, enable Email and enable Email OTP. In Authentication > Email Templates, edit the Magic Link template so it includes `{{ .Token }}`. The application uses the six-digit token template, not the magic-link URL.
+The frontend calls `signInWithOtp` and then verifies the eight-digit value with `verifyOtp`. The code is generated and checked by Supabase; it must not be generated or trusted in the browser.
 
-Supabase's default SMTP is suitable for testing but has strict sending limits and may only deliver to project team addresses. For a public launch, configure a free-tier transactional provider such as Resend under Project Settings > Auth > SMTP Settings. Add and verify a sending domain if the provider requires it, then use its SMTP host, port, username, password, and sender address in Supabase. Never put SMTP credentials in this frontend.
+After authentication, the dashboard calls the `get_current_quest` RPC. Apply the database migrations with `npx supabase db push`; otherwise the player profile or checkpoint data may be missing and the dashboard cannot load a clue.
+
+Player emails are stored in `public.players.email` by the `on_auth_user_created` trigger. The email comes from Supabase Auth and is not supplied by the browser as trusted profile data.
+
+In Supabase, enable Email OTP under Authentication > Providers > Email. Then open Authentication > Email Templates > Magic Link and use this body:
+
+```html
+<h2>Your NoLimit access code</h2>
+<p>Enter this eight-digit code in the NoLimit login screen:</p>
+<p style="font-size: 32px; font-weight: 700; letter-spacing: 8px;">{{ .Token }}</p>
+<p>This code expires shortly. If you did not request it, you can ignore this email.</p>
+```
+
+Keep `{{ .Token }}` in the template. Remove `{{ .ConfirmationURL }}` so users receive the code instead of a localhost link. Configure the sender and SMTP provider under Project Settings > Auth > SMTP Settings. Never put SMTP or service-role credentials in this frontend.
 
 ## QR prototype
 
-The six test checkpoints are seeded by the `20260813000000_seed_checkpoints.sql` migration. The dashboard currently skips the email login screen and creates an anonymous test player so the existing authenticated scan RPC can still be used.
+The six test checkpoints are seeded by the `20260813000000_seed_checkpoints.sql` migration. Players authenticate by email OTP before the dashboard loads, and the new-user trigger creates their player record automatically.
 
 Before testing, enable **Anonymous Sign-Ins** in Supabase under Authentication > Providers. The local config has this enabled for local Supabase development.
 

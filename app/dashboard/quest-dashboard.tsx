@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import { createClient } from "../../lib/supabase/client";
+import LogoutButton from "../logout-button";
 
 const supabase = createClient();
 
@@ -18,29 +19,27 @@ type Quest = {
 
 export default function QuestDashboard() {
   const [quest, setQuest] = useState<Quest | null>(null);
-  const [message, setMessage] = useState("Starting test session...");
+  const [message, setMessage] = useState("Loading your mission...");
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   useEffect(() => {
     let active = true;
-    async function startAnonymousSession() {
+    async function loadQuest() {
       const { data: session } = await supabase.auth.getSession();
       if (!session.session) {
-        const { error } = await supabase.auth.signInAnonymously();
-        if (error) {
-          setMessage(`${error.message} Enable anonymous sign-ins in Supabase to test.`);
-          return;
-        }
+        setMessage("Please sign in to access the mission.");
+        return;
       }
       if (!active) return;
       const { data, error } = await supabase.rpc("get_current_quest");
       if (error) setMessage(error.message);
       else {
-        setQuest(data as Quest);
-        setMessage("");
+        const result = data as Quest;
+        setQuest(result);
+        setMessage(result.success ? "" : result.error_code ?? "Unable to load your mission.");
       }
     }
-    void startAnonymousSession();
+    void loadQuest();
     return () => { active = false; };
   }, []);
 
@@ -85,7 +84,7 @@ export default function QuestDashboard() {
 
   return (
     <main className="dashboard-page">
-      <div className="dashboard-brand"><span className="status-dot" /> NoLimit / Test mission</div>
+    <div className="dashboard-brand"><span><span className="status-dot" /> NoLimit / Live mission</span><LogoutButton /></div>
       <section className="dashboard-card">
         <span className="card-kicker">{"// ACTIVE CLUE"}</span>
         {quest?.completed ? <><h1>Quest<br /><em>complete.</em></h1><p>Show this voucher at the counter.</p><div className="voucher-box">{quest.voucher_code}</div></> : <>
