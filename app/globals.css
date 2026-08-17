@@ -32,6 +32,20 @@ h1 { margin: 20px 0 21px; font-size: clamp(60px, 9vw, 118px); line-height: .84; 
 .scanner-panel p { margin: 18px 0 0; font: 11px 'DM Mono', monospace; color: var(--muted); }
 .scanner-close { width: auto; padding: 7px 0; margin: 0 0 15px auto; color: var(--cyan); background: transparent; font: 10px 'DM Mono', monospace; }
 #qr-reader { overflow: hidden; border: 1px solid var(--line) !important; }
-.voucher-box { display: inline-block; margin-top: 26px; padding: 18px 22px; border: 1px solid var(--cyan); color: var(--cyan); font: 24px 'DM Mono', monospace; letter-spacing: .12em; }
+.completion-mark { display: grid; place-items: center; width: 32px; height: 32px; margin-bottom: -7px; border: 1px solid var(--cyan); border-radius: 50%; color: var(--charcoal); background: var(--cyan); font-size: 18px; font-weight: 800; }
+.completion-copy { margin-bottom: 24px; }
+.voucher-card { position: relative; width: min(100%, 390px); overflow: hidden; margin-top: 26px; background: #f1f6f6; color: var(--charcoal); border-radius: 3px; box-shadow: 9px 9px 0 rgba(48,232,239,.1); }
+.voucher-card:before, .voucher-card:after { content: ''; position: absolute; top: 106px; width: 18px; height: 18px; border-radius: 50%; background: var(--charcoal); }
+.voucher-card:before { left: -9px; }.voucher-card:after { right: -9px; }
+.voucher-card-top { display: flex; align-items: center; justify-content: space-between; padding: 15px 18px; background: var(--cyan); font: 10px 'DM Mono', monospace; letter-spacing: .12em; }
+.voucher-status { padding: 5px 7px; border: 1px solid rgba(16,20,22,.35); font-size: 8px; }
+.voucher-perforation { height: 1px; margin: 0 18px; border-top: 1px dashed #aab9b9; }
+.voucher-code-label { margin: 23px 18px 9px; color: #657477; font: 9px 'DM Mono', monospace; letter-spacing: .14em; }
+.voucher-code { overflow-wrap: anywhere; padding: 0 18px; color: var(--charcoal); font: 700 clamp(25px, 8vw, 35px) 'DM Mono', monospace; letter-spacing: .08em; }
+.copy-voucher { margin: 19px 18px 20px; padding: 13px 14px; background: var(--charcoal); color: var(--cyan); font: 10px 'DM Mono', monospace; letter-spacing: .08em; }
+.copy-voucher strong { font-size: 17px; line-height: 10px; }
+.voucher-card-bottom { display: flex; justify-content: space-between; padding: 12px 18px; border-top: 1px solid #d3dddd; color: #718083; font: 8px 'DM Mono', monospace; letter-spacing: .08em; }
+.voucher-note { max-width: 390px !important; margin-top: 17px; color: #657477 !important; font: 10px 'DM Mono', monospace; line-height: 1.6 !important; }
 .login-page { min-height: 100svh; position: relative; display: grid; place-items: center; padding: 24px; background: radial-gradient(circle at 50% 10%, rgba(26,114,119,.2), transparent 45%), var(--charcoal); }.login-brand { position: absolute; top: 28px; left: clamp(22px, 6vw, 88px); color: var(--cyan); font: 16px 'DM Mono', monospace; letter-spacing: -.05em; }.login-brand span { margin-left: 12px; color: var(--muted); font-size: 9px; letter-spacing: .12em; }.login-card { width: min(440px, 100%); padding: clamp(28px, 6vw, 48px); background: rgba(23,30,33,.92); border: 1px solid #2b373a; box-shadow: 15px 15px 0 rgba(48,232,239,.06); }.login-kicker { color: var(--cyan); font: 10px 'DM Mono', monospace; letter-spacing: .13em; }.login-card h1 { margin: 20px 0; font-size: clamp(45px, 10vw, 70px); }.login-intro { color: #98a4a6; font-size: 13px; line-height: 1.7; margin: 0 0 32px; }
 @media (max-width: 700px) { .hunt-page { padding: 20px 19px 20px; }.event-tag { font-size: 8px; }.mission-layout { display: block; margin: 12vh auto 9vh; }.mission-copy { margin-bottom: 44px; }.intro { margin-bottom: 29px; }.pass-card { padding: 29px 20px 25px; box-shadow: 8px 8px 0 rgba(48,232,239,.06); }.pass-card h2 { font-size: 30px; }.page-footer { font-size: 8px; gap: 9px; }.page-footer span:first-child, .footer-line { display: none; }.orbit-one { right: -340px; top: 17%; }.orbit-two { right: -500px; top: 5%; } }
+@media (max-width: 430px) { .dashboard-page { padding: 22px 18px; }.dashboard-card { margin-top: 14vh; }.voucher-card-bottom { font-size: 7px; } }

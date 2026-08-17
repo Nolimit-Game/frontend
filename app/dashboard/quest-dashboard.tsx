@@ -20,6 +20,7 @@ type Quest = {
 export default function QuestDashboard() {
   const [quest, setQuest] = useState<Quest | null>(null);
   const [message, setMessage] = useState("Loading your mission...");
+  const [copied, setCopied] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   useEffect(() => {
@@ -82,12 +83,37 @@ export default function QuestDashboard() {
     };
   }, [isScannerOpen]);
 
+  async function copyVoucher() {
+    if (!quest?.voucher_code) return;
+    await navigator.clipboard.writeText(quest.voucher_code);
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1800);
+  }
+
   return (
     <main className="dashboard-page">
     <div className="dashboard-brand"><span><span className="status-dot" /> NoLimit / Live mission</span><LogoutButton /></div>
       <section className="dashboard-card">
         <span className="card-kicker">{"// ACTIVE CLUE"}</span>
-        {quest?.completed ? <><h1>Quest<br /><em>complete.</em></h1><p>Show this voucher at the counter.</p><div className="voucher-box">{quest.voucher_code}</div></> : <>
+        {quest?.completed ? <>
+          <span className="completion-mark" aria-hidden="true">✓</span>
+          <h1>Quest<br /><em>complete.</em></h1>
+          <p className="completion-copy">You made it to the finish line. Show this voucher at the counter to claim your reward.</p>
+          <div className="voucher-card" aria-label="Your NoLimit voucher">
+            <div className="voucher-card-top">
+              <span className="voucher-label">NOLIMIT REWARD</span>
+              <span className="voucher-status">VALID</span>
+            </div>
+            <div className="voucher-perforation" aria-hidden="true" />
+            <div className="voucher-code-label">YOUR VOUCHER CODE</div>
+            <div className="voucher-code">{quest.voucher_code ?? "UNAVAILABLE"}</div>
+            <button className="copy-voucher" type="button" onClick={() => void copyVoucher()} disabled={!quest.voucher_code}>
+              <span>{copied ? "COPIED TO CLIPBOARD" : "COPY CODE"}</span><strong>{copied ? "✓" : "↗"}</strong>
+            </button>
+            <div className="voucher-card-bottom"><span>ONE REWARD PER PLAYER</span><span>NO LIMIT / 2026</span></div>
+          </div>
+          <p className="voucher-note">Keep this code ready on your phone. The cashier will verify it before applying your reward.</p>
+        </> : <>
           <h1>{quest?.current_step ? `0${quest.current_step}` : "..."}</h1>
           <h2>{quest?.title ?? "Loading clue..."}</h2>
           <p>{quest?.clue_text ?? message}</p>
