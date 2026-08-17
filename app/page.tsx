@@ -7,7 +7,7 @@ export default function Home() {
       <section className="login-card">
         <span className="login-kicker">{"// PLAYER ACCESS"}</span>
         <h1>Find your<br /><em>next signal.</em></h1>
-        <p className="login-intro">Enter your email and we&apos;ll send a one-time access code for the mission.</p>
+        <p className="login-intro">Enter the mission instantly. No email, password, or account required.</p>
         <LoginForm />
       </section>
     </main>
