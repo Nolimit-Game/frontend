@@ -26,7 +26,7 @@ export default function LoginForm() {
     <div className="login-form">
       {message && <p className="form-message" role="alert">{message}</p>}
       <button type="button" onClick={signInAnonymously} disabled={isLoading}>
-        <span>{isLoading ? "Entering..." : "Enter anonymously"}</span>
+        <span>{isLoading ? "Opening..." : "Enter the style hunt"}</span>
         <span className="arrow" aria-hidden="true">↗</span>
       </button>
       <p className="signup-prompt">No account or password needed. Just bring your curiosity.</p>

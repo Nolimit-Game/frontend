@@ -92,32 +92,34 @@ export default function QuestDashboard() {
 
   return (
     <main className="dashboard-page">
-    <div className="dashboard-brand"><span><span className="status-dot" /> NoLimit / Live mission</span><LogoutButton /></div>
+    <div className="promo-strip">SIGN UP AND GET 10% OFF ON YOUR FIRST ORDER <span>•</span> NOLIMIT STYLE HUNT</div>
+    <div className="dashboard-brand"><span className="brand-lockup"><span className="logo-frame"><img className="logo-image" src="/logo.png" alt="NoLimit" /></span><span className="brand-caption">FASHION / LIFESTYLE / HOME</span></span><LogoutButton /></div>
       <section className="dashboard-card">
-        <span className="card-kicker">{"// ACTIVE CLUE"}</span>
+        <span className="card-kicker">NOLIMIT / STYLE HUNT</span>
         {quest?.completed ? <>
           <span className="completion-mark" aria-hidden="true">✓</span>
-          <h1>Quest<br /><em>complete.</em></h1>
-          <p className="completion-copy">You made it to the finish line. Show this voucher at the counter to claim your reward.</p>
+          <h1>Look<br /><em>complete.</em></h1>
+          <p className="completion-copy">You found the final piece. Show this reward card at the counter to claim your exclusive NOLIMIT store offer.</p>
           <div className="voucher-card" aria-label="Your NoLimit voucher">
             <div className="voucher-card-top">
-              <span className="voucher-label">NOLIMIT REWARD</span>
+              <span className="voucher-label">NO LIMIT / REWARD CARD</span>
               <span className="voucher-status">VALID</span>
             </div>
             <div className="voucher-perforation" aria-hidden="true" />
-            <div className="voucher-code-label">YOUR VOUCHER CODE</div>
+             <div className="voucher-code-label">YOUR PRIVATE EDIT CODE</div>
             <div className="voucher-code">{quest.voucher_code ?? "UNAVAILABLE"}</div>
             <button className="copy-voucher" type="button" onClick={() => void copyVoucher()} disabled={!quest.voucher_code}>
               <span>{copied ? "COPIED TO CLIPBOARD" : "COPY CODE"}</span><strong>{copied ? "✓" : "↗"}</strong>
             </button>
-            <div className="voucher-card-bottom"><span>ONE REWARD PER PLAYER</span><span>NO LIMIT / 2026</span></div>
+             <div className="voucher-card-bottom"><span>ONE REWARD PER GUEST</span><span>NOLIMIT / 2026</span></div>
           </div>
           <p className="voucher-note">Keep this code ready on your phone. The cashier will verify it before applying your reward.</p>
         </> : <>
-          <h1>{quest?.current_step ? `0${quest.current_step}` : "..."}</h1>
+           <div className="step-label">LOOK {quest?.current_step ? `0${quest.current_step}` : "--"}</div>
+           <h1>{quest?.current_step ? `0${quest.current_step}` : "..."}</h1>
           <h2>{quest?.title ?? "Loading clue..."}</h2>
           <p>{quest?.clue_text ?? message}</p>
-          <button className="clue-box clue-button" onClick={() => setIsScannerOpen(true)} disabled={!quest?.success}> <span>SCAN CLUE</span><strong>OPEN CAMERA ↗</strong></button>
+           <button className="clue-box clue-button" onClick={() => setIsScannerOpen(true)} disabled={!quest?.success}> <span>FIND NEXT PIECE</span><strong>SCAN QR ↗</strong></button>
         </>}
         {message && quest?.success && <small>{message}</small>}
       </section>
